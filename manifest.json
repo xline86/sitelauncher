@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "siteLauncher",
+  "description": "これからかっこいい site launcher をつくるよ",
+  "version": "1.0",
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": "images/icon.png"
+  },
+  "permissions": [
+    "bookmarks"
+  ]
+}
