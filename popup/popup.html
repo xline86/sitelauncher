@@ -1,31 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
 
 <head>
-    <meta charset="utf-8">
+    <meta charset="UTF-8">
+    <title>site launcher</title>
+    <link rel="stylesheet" href="popup.css">
+    <script src="popup.js" defer></script>
 </head>
 
-<body>
-    <h1>HELLO WORLD</h1>
-    <button id="btn">text change</button>
-    <!-- <script src="popup.js"></script> -->
+<body tabindex="0">
+    <div class="container">
+        <h1><span id="keyInput_display" class="input_str"></span></h1>
 
-    <article id="textbox">
-        <p>このエリアにHTML要素を追加する</p>
-        <script src="popup.js"></script>
-    </article>
+        <div class="hr"></div>
 
-    <article id="bookmark">
-        <p>ブックマークを表示する</p>
-        <script src="bb.js"></script>
-    </article>
-
-    <article id="keyInput_history">
-        <p>keyInput_historyを表示する</p>
-        <!-- <script src="popup.js"></script> -->
-    </article>
-
-    <p id="output"></p>
+        <ul class="menu">
+            <li class="selected">
+                <span class="label">ym : youtube Music aaa</span>
+            </li>
+            <li>
+                <span class="label">ypl : youtube playlists</span>
+            </li>
+            <li>
+                <span class="label">yw : youtube WL</span>
+            </li>
+        </ul>
+    </div>
 </body>
 
 </html>

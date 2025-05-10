@@ -1,47 +1,35 @@
-// https://mebee.info/2021/12/30/post-40182/
+// キー入力イベントを実装
+document.addEventListener('keypress', keypress_ivent);
 
-function makebox() {
-    // ボタン'btn'が押されたとき'h1'要素の文字を変更する
-    document.getElementById('btn').addEventListener('click', () => {
-        document.querySelector('h1').textContent = "CHANGED !!";
-    })
-}
-
-function aaaaa() {
-    // a要素を作成
-    let a_element = document.createElement('a');
-    a_element.textContent = 'Top page';
-    a_element.id = 'link_to_top';
-    a_element.href = "https://developer.chrome.com/docs/extensions/reference/bookmarks/";
-
-    // ul要素を作成
-    let ul_element = document.createElement('ul');
-    for (let i = 1; i <= 5; i++) {
-        var li_element = document.createElement('li');
-        li_element.textContent = 'テキストa' + i;
-        ul_element.appendChild(li_element);
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Backspace') {
+        keyInput_history = keyInput_history.slice(0, -1);
     }
+});
 
-    // 作成したHTML要素をarticle要素に追加する
-    let textbox = document.getElementById('textbox');
-    textbox.appendChild(ul_element);
-    textbox.appendChild(a_element);
+// 入力の履歴を保持する変数
+let keyInput_history = "";
 
-    // 以下のような`html`が追加される
-    // <ul>
-    //     <li>テキスト1</li>
-    //     <li>テキスト2</li>
-    //     <li>テキスト3</li>
-    //     <li>テキスト4</li>
-    //     <li>テキスト5</li>
-    // </ul>
-    // <a id="link_to_top" href="/" rel="nofollow nooppener">Top page</a>
+function keypress_ivent(input_obj) {
+    keyInput_history += input_obj.key;
+
+    // キー入力をリアルタイムで表示
+    updateKeyInputDisplay();
+
+    return false;
 }
 
-aaaaa();
+// <span id="keyInput_display">にキー入力履歴を表示
+function updateKeyInputDisplay() {
+    const displayElement = document.getElementById("keyInput_display");
+    if (displayElement) {
+        displayElement.textContent = keyInput_history;
+    }
+}
+
 
 // フォルダの`title`(string)が与えられたとき、その配下の`BookmarkTreeNode`の`List`を返す関数
-function getChildrenBookmarkList(parentBookmark_title) {
+function get_ChildrenBookmark_titleList(parentBookmark_title) {
     var bookmarkList = [];
     // `bookmarks.BookmarkTreeNode`のリストが返ってくるので、`search_results`として取得
     chrome.bookmarks.search(
@@ -65,43 +53,37 @@ function getChildrenBookmarkList(parentBookmark_title) {
 }
 
 // "SiteLauncher_ver1"配下の`BookmarkTreeNode`を`List`で取得
-bookmarkList = getChildrenBookmarkList("SiteLauncher_ver1");
+bookmark_titleList = get_ChildrenBookmark_titleList("SiteLauncher_ver1");
+// テスト
+bookmark_titleList=["ym : youtube Music", "ypl : youtube playlists","yw : youtube WL"]
 
-// Key入力を保存する文字列
-keyInput_history = ""
-
-document.addEventListener('keypress', keypress_ivent);
-function keypress_ivent(input_obj) {
-    keyInput_history += input_obj.key;
-    // keyInput_history += input_obj.key;
-
-    for (const bookmark_laucher of bookmarkList) {
-        if (keyInput_history == getHotKey(bookmark_laucher.title)) {
-            chrome.tabs.create(
-                { url: bookmark_laucher.url }
-            );
-        }
-    }
-
-    showKeyInput_history()
-
-    if (input_obj.key == "Backspace") {
-        chrome.tabs.create(
-            { url: "https://ja.javascript.info/keyboard-events" }
-        );
-
-    }
-    return false;
+// bookmark_titleListの各要素を分割して、keyとlabelを取得
+function parseBookmarkTitleList(bookmark_titleList) {
+    return bookmark_titleList.map(title => {
+        const [key, label] = title.split(/:\s(.+)/); // 「: 」で分割（前方のkey, 後方のlabel）
+        return { key: key.trim(), label: label.trim() };
+    });
 }
 
-function getHotKey(s) {
-    return s.slice(0, s.indexOf(":"));
+// bookmark_titleListの各要素を分割して、keyとlabelを取得
+bookmark_list = parseBookmarkTitleList(bookmark_titleList);
+
+// メニューを更新する関数
+function updateMenu(list) {
+    const menu = document.querySelector('.menu');
+    menu.innerHTML = ''; // 現在の内容をクリア
+
+    list.forEach((item, index) => {
+        const li = document.createElement('li');
+        if (index === 0) li.classList.add('selected'); // 最初の要素を選択中にする
+
+        const span = document.createElement('span');
+        span.className = 'label';
+        span.textContent = `${item.key} : ${item.label}`;
+
+        li.appendChild(span);
+        menu.appendChild(li);
+    });
 }
 
-function showKeyInput_history() {
-    let p_element = document.createElement("p");
-    p_element.textContent = keyInput_history
-
-    let textbox = document.getElementById("keyInput_history");
-    textbox.appendChild(p_element);
-}
+updateMenu(bookmark_list);
